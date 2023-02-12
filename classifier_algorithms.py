@@ -11,6 +11,8 @@ from sklearn import svm
 from sklearn.feature_selection import SelectKBest
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import f_classif
+from sklearn.neural_network import MLPClassifier
+import time
 
 def csv_loader():
     data = 'dataset_changed.csv'
@@ -30,8 +32,8 @@ def get_correlation_graph(df):
 
 def get_train_test(df):
     df['class_int'] = pd.Categorical(df[' Label']).codes
-    print(df['class_int'].unique())
-    print(df[' Label'].unique())
+    #print(df['class_int'].unique())
+    #print(df[' Label'].unique())
     #exit()
     df = clean_dataset(df)
     #X = df.drop([' Label', 'Flow ID', ' Source IP', ' Destination IP', ' Timestamp', 'SimillarHTTP', 'Flow Bytes/s'], axis=1)
@@ -80,9 +82,25 @@ X_test = scaler.transform(X_test)
 X_train = pd.DataFrame(X_train, columns=[cols])
 X_test = pd.DataFrame(X_test, columns=[cols])
 
+print("\n ### MLP ###")
+clf = MLPClassifier(hidden_layer_sizes=(150,100,50),
+                        max_iter = 300,activation = 'relu',
+                        solver = 'sgd')
+start = time.time()
+clf.fit(X_train, y_train)
+print(f'MLP Time: {time.time() - start}')
+y_pred = clf.predict(X_test)
+target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
+print(classification_report(y_test, y_pred, target_names=target_names))
+
+
 print("\n### KNN ###")
 knn = KNeighborsClassifier(n_neighbors=7)
+
+start = time.time()
 knn.fit(X_train, y_train)
+print(f'KNN Time: {time.time() - start}')
+
 y_pred = knn.predict(X_test)
 print(y_pred)
 print('Model accuracy score: {0:0.4f}'. format(accuracy_score(y_test, y_pred)))
@@ -95,15 +113,22 @@ print(classification_report(y_test, y_pred, target_names=target_names))
 
 print("\n### Random Forest ###")
 clf = RandomForestClassifier(max_depth=4, random_state=0)
+
+start = time.time()
 clf.fit(X_train, y_train)
+print(f'Random Forest Time: {time.time() - start}')
+
 y_pred = clf.predict(X_test)
 target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
 
 print("\n### SVM ###")
 clf = svm.SVC(kernel='linear') # Linear Kernel
-#Train the model using the training sets
+
+start = time.time()
 clf.fit(X_train, y_train)
+print(f'SVM Time: {time.time() - start}')
+
 #Predict the response for test dataset
 y_pred = clf.predict(X_test)
 target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
