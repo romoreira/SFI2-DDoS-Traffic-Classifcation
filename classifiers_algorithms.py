@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import f_classif
 
 def csv_loader():
-    data = 'dataset_changed.csv'
+    data = 'dataset.csv'
     df = pd.read_csv(data)
     print(df.shape)
     print(df)
@@ -81,7 +81,7 @@ X_train = pd.DataFrame(X_train, columns=[cols])
 X_test = pd.DataFrame(X_test, columns=[cols])
 
 print("\n### KNN ###")
-knn = KNeighborsClassifier(n_neighbors=7)
+knn = KNeighborsClassifier(n_neighbors=5)
 knn.fit(X_train, y_train)
 y_pred = knn.predict(X_test)
 print(y_pred)
@@ -89,7 +89,7 @@ print('Model accuracy score: {0:0.4f}'. format(accuracy_score(y_test, y_pred)))
 y_pred_train = knn.predict(X_train)
 print('Training set accuracy score: {0:0.4f}'. format(accuracy_score(y_train, y_pred_train)))
 print('Test set accuracy score: {:.4f}'.format(knn.score(X_test, y_test)))
-target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
+target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_LDAP', 'DrDoS_MSSQL', 'DrDoS_NTP', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_SSDP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
 
 
@@ -97,16 +97,16 @@ print("\n### Random Forest ###")
 clf = RandomForestClassifier(max_depth=4, random_state=0)
 clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
-target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
+target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_LDAP', 'DrDoS_MSSQL', 'DrDoS_NTP', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_SSDP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
 
-print("\n### SVM ###")
+print("\n #### SVM ###")
 clf = svm.SVC(kernel='linear') # Linear Kernel
 #Train the model using the training sets
 clf.fit(X_train, y_train)
 #Predict the response for test dataset
 y_pred = clf.predict(X_test)
-target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
+target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_LDAP', 'DrDoS_MSSQL', 'DrDoS_NTP', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_SSDP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
 
 
