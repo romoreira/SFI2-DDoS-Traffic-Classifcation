@@ -13,6 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import f_classif
 from sklearn.neural_network import MLPClassifier
 import time
+from sklearn.model_selection import cross_val_score
 
 def csv_loader():
     data = 'dataset_changed.csv'
@@ -30,6 +31,12 @@ def get_correlation_graph(df):
     a.set_yticklabels(a.get_yticklabels(), rotation=30)
     plt.show()
 
+def get_X_y(df):
+    df['class_int'] = pd.Categorical(df[' Label']).codes
+    df = clean_dataset(df)
+    X = df.drop(['class_int'], axis=1)
+    y = df['class_int']
+    return X, y
 def get_train_test(df):
     df['class_int'] = pd.Categorical(df[' Label']).codes
     #print(df['class_int'].unique())
@@ -82,18 +89,67 @@ X_test = scaler.transform(X_test)
 X_train = pd.DataFrame(X_train, columns=[cols])
 X_test = pd.DataFrame(X_test, columns=[cols])
 
-print("\n ### MLP ###")
-clf = MLPClassifier(hidden_layer_sizes=(150,100,50),
-                        max_iter = 300,activation = 'relu',
-                        solver = 'sgd')
-start = time.time()
-clf.fit(X_train, y_train)
-print(f'MLP Time: {time.time() - start}')
-y_pred = clf.predict(X_test)
-target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
-print(classification_report(y_test, y_pred, target_names=target_names))
+
+def cross_validation(model, X, y):
+    if model == "KNN":
+        k_scores = []
+        k_range = range(1, 31)
+        for k in k_range:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            scores = cross_val_score(knn, X, y, cv=10, scoring='accuracy')
+            k_scores.append(scores.mean())
+
+        plt.plot(k_range, k_scores)
+        plt.xlabel('Value of K for KNN')
+        plt.ylabel('Cross-Validated Accuracy')
+        plt.savefig("Results/KNN_Cross.pdf")
+        print("KNN Scores: "+str(k_scores))
+
+        file = open("Results/KNN.txt", "w")
+        a = file.write(str(k_scores))
+        file.close()
+        print(a)
+    elif model == "RandomForest":
+        clf = RandomForestClassifier(max_depth=4, random_state=0)
+        scores = cross_val_score(clf, X, y, cv=10, scoring='accuracy')
+        print("Random Forest Scores: "+str(scores))
+
+        file = open("Results/RandomForest.txt", "w")
+        a = file.write(str(scores))
+        file.close()
+        print(a)
+
+    elif model == "SVM":
+        clf = svm.SVC(kernel='linear')  # Linear Kernel
+        scores = cross_val_score(clf, X, y, cv=10, scoring='accuracy')
+        print("SVM Scores: " + str(scores))
+
+        file = open("Results/SVM.txt", "w")
+        a = file.write(str(scores))
+        file.close()
+        print(a)
+
+    elif model == "MLP":
+        clf = MLPClassifier(hidden_layer_sizes=(150, 100, 50),
+                            max_iter=300, activation='relu',
+                            solver='sgd')
+        scores = cross_val_score(clf, X, y, cv=10, scoring='accuracy')
+        print("MLP Scores: " + str(scores))
+
+        file = open("Results/MLP.txt", "w")
+        a = file.write(str(scores))
+        file.close()
+        print(a)
+
+X, y = get_X_y(csv_loader())
+cross_validation("KNN", X, y)
+cross_validation("RandomForest", X, y)
+cross_validation("SVM", X, y)
+cross_validation("MLP", X, y)
 
 
+print("After here, run without cross-validation\n")
+exit()
 print("\n### KNN ###")
 knn = KNeighborsClassifier(n_neighbors=7)
 
@@ -109,6 +165,19 @@ print('Training set accuracy score: {0:0.4f}'. format(accuracy_score(y_train, y_
 print('Test set accuracy score: {:.4f}'.format(knn.score(X_test, y_test)))
 target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
+
+
+print("\n ### MLP ###")
+clf = MLPClassifier(hidden_layer_sizes=(150,100,50),
+                        max_iter = 300,activation = 'relu',
+                        solver = 'sgd')
+start = time.time()
+clf.fit(X_train, y_train)
+print(f'MLP Time: {time.time() - start}')
+y_pred = clf.predict(X_test)
+target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
+print(classification_report(y_test, y_pred, target_names=target_names))
+
 
 
 print("\n### Random Forest ###")
