@@ -1,3 +1,4 @@
+Time: 0.02669358253479004
                precision    recall  f1-score   support
 
        BENIGN       0.99      0.99      0.99      1723
