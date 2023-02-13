@@ -142,14 +142,15 @@ def cross_validation(model, X, y):
         print(a)
 
 X, y = get_X_y(csv_loader())
-cross_validation("KNN", X, y)
-cross_validation("RandomForest", X, y)
-cross_validation("SVM", X, y)
-cross_validation("MLP", X, y)
+#cross_validation("KNN", X, y)
+#cross_validation("RandomForest", X, y)
+#cross_validation("SVM", X, y)
+#cross_validation("MLP", X, y)
 
 
 print("After here, run without cross-validation\n")
-exit()
+
+
 print("\n### KNN ###")
 knn = KNeighborsClassifier(n_neighbors=7)
 
@@ -165,6 +166,12 @@ print('Training set accuracy score: {0:0.4f}'. format(accuracy_score(y_train, y_
 print('Test set accuracy score: {:.4f}'.format(knn.score(X_test, y_test)))
 target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
+scores = classification_report(y_test, y_pred, target_names=target_names)
+file = open("Results/KNN_one.txt", "w")
+a = file.write(str(scores))
+file.close()
+print(a)
+
 
 
 print("\n ### MLP ###")
@@ -177,6 +184,11 @@ print(f'MLP Time: {time.time() - start}')
 y_pred = clf.predict(X_test)
 target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
+scores = classification_report(y_test, y_pred, target_names=target_names)
+file = open("Results/MLP_one.txt", "w")
+a = file.write(str(scores))
+file.close()
+print(a)
 
 
 
@@ -190,6 +202,13 @@ print(f'Random Forest Time: {time.time() - start}')
 y_pred = clf.predict(X_test)
 target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
+scores = classification_report(y_test, y_pred, target_names=target_names)
+file = open("Results/RandomForest_one.txt", "w")
+a = file.write(str(scores))
+file.close()
+print(a)
+
+
 
 print("\n### SVM ###")
 clf = svm.SVC(kernel='linear') # Linear Kernel
@@ -202,6 +221,11 @@ print(f'SVM Time: {time.time() - start}')
 y_pred = clf.predict(X_test)
 target_names = ['BENIGN', 'DrDoS-DNS', 'DrDoS_MSSQL', 'DrDoS_NetBIOS', 'DrDoS_SNMP', 'DrDoS_UDP','Syn', 'TFTP', 'UDP-lag']
 print(classification_report(y_test, y_pred, target_names=target_names))
+scores = classification_report(y_test, y_pred, target_names=target_names)
+file = open("Results/SVM_one.txt", "w")
+a = file.write(str(scores))
+file.close()
+print(a)
 
 
 
