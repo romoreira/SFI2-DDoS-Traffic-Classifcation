@@ -1,0 +1,16 @@
+Time: 0.02930474281311035
+               precision    recall  f1-score   support
+
+       BENIGN       0.99      1.00      0.99      1723
+    DrDoS-DNS       0.97      0.93      0.95      1776
+  DrDoS_MSSQL       0.96      0.99      0.97      1967
+DrDoS_NetBIOS       0.94      0.97      0.96      1951
+   DrDoS_SNMP       1.00      1.00      1.00      2035
+    DrDoS_UDP       0.55      0.54      0.54      2012
+          Syn       0.98      0.97      0.97      1811
+         TFTP       0.97      0.98      0.97      1749
+      UDP-lag       0.55      0.54      0.54      2011
+
+     accuracy                           0.87     17035
+    macro avg       0.88      0.88      0.88     17035
+ weighted avg       0.87      0.87      0.87     17035
